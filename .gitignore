@@ -63,3 +63,7 @@ packagecache
 /docs/hotdoc-private*
 *.pyc
 /*venv*
+
+# Added by cargo
+
+/target
