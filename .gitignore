@@ -16,3 +16,6 @@ Cargo.lock
 # IDEA and VSCode
 .idea/
 .code/
+
+# Vim backup files
+*~
