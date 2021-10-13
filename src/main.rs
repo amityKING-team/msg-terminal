@@ -1,179 +1,61 @@
-/// A simple example demonstrating how to handle user input. This is
-/// a bit out of the scope of the library as it does not provide any
-/// input handling out of the box. However, it may helps some to get
-/// started.
-///
-/// This is a very simple example:
-///   * A input box always focused. Every character you type is registered
-///   here
-///   * Pressing Backspace erases a character
-///   * Pressing Enter pushes the current input in the history of previous
-///   messages
+use cursive::traits::*;
+use cursive::views::{Dialog, EditView, TextView};
+use cursive::Cursive;
 
-#[allow(dead_code)]
-pub mod util;
+fn main() {
+    let mut siv = cursive::default();
 
-use crate::util::event::{Event, Events};
-use std::{error::Error, io};
-use termion::{event::Key, input::MouseTerminal, raw::IntoRawMode, screen::AlternateScreen};
-use tui::{
-    backend::TermionBackend,
-    layout::{Constraint, Direction, Layout},
-    style::{Color, Modifier, Style},
-    text::{Span, Spans, Text},
-    widgets::{Block, Borders, List, ListItem, Paragraph},
-    Terminal,
-};
-use unicode_width::UnicodeWidthStr;
+    // Create a dialog with an edit text and a button.
+    // The user can either hit the <Ok> button,
+    // or press Enter on the edit text.
+    siv.add_layer(
+        Dialog::new()
+            .title("Enter your name")
+            // Padding is (left, right, top, bottom)
+            .padding_lrtb(1, 1, 1, 0)
+            .content(
+                EditView::new()
+                    // Call `show_popup` when the user presses `Enter`
+                    .on_submit(show_popup)
+                    // Give the `EditView` a name so we can refer to it later.
+                    .with_name("name")
+                    // Wrap this in a `ResizedView` with a fixed width.
+                    // Do this _after_ `with_name` or the name will point to the
+                    // `ResizedView` instead of `EditView`!
+                    .fixed_width(20),
+            )
+            .button("Ok", |s| {
+                // This will run the given closure, *ONLY* if a view with the
+                // correct type and the given name is found.
+                let name = s
+                    .call_on_name("name", |view: &mut EditView| {
+                        // We can return content from the closure!
+                        view.get_content()
+                    })
+                    .unwrap();
 
-enum InputMode {
-    Normal,
-    Editing,
+                // Run the next step
+                show_popup(s, &name);
+            }),
+    );
+
+    siv.run();
 }
 
-/// App holds the state of the application
-struct App {
-    /// Current value of the input box
-    input: String,
-    /// Current input mode
-    input_mode: InputMode,
-    /// History of recorded messages
-    messages: Vec<String>,
-}
-
-impl Default for App {
-    fn default() -> App {
-        App {
-            input: String::new(),
-            input_mode: InputMode::Normal,
-            messages: Vec::new(),
-        }
+// This will replace the current layer with a new popup.
+// If the name is empty, we'll show an error message instead.
+fn show_popup(s: &mut Cursive, name: &str) {
+    if name.is_empty() {
+        // Try again as many times as we need!
+        s.add_layer(Dialog::info("Please enter a name!"));
+    } else {
+        let content = format!("Hello {}!", name);
+        // Remove the initial popup
+        s.pop_layer();
+        // And put a new one instead
+        s.add_layer(
+            Dialog::around(TextView::new(content))
+                .button("Quit", |s| s.quit()),
+        );
     }
-}
-
-fn main() -> Result<(), Box<dyn Error>> {
-    // Terminal initialization
-    let stdout = io::stdout().into_raw_mode()?;
-    let stdout = MouseTerminal::from(stdout);
-    let stdout = AlternateScreen::from(stdout);
-    let backend = TermionBackend::new(stdout);
-    let mut terminal = Terminal::new(backend)?;
-
-    // Setup event handlers
-    let events = Events::new();
-
-    // Create default app state
-    let mut app = App::default();
-
-    loop {
-        // Draw UI
-        terminal.draw(|f| {
-            let chunks = Layout::default()
-                .direction(Direction::Vertical)
-                .margin(2)
-                .constraints(
-                    [
-                        Constraint::Length(1),
-                        Constraint::Length(3),
-                        Constraint::Min(1),
-                    ]
-                    .as_ref(),
-                )
-                .split(f.size());
-
-            let (msg, style) = match app.input_mode {
-                InputMode::Normal => (
-                    vec![
-                        Span::raw("Press "),
-                        Span::styled("q", Style::default().add_modifier(Modifier::BOLD)),
-                        Span::raw(" to exit, "),
-                        Span::styled("e", Style::default().add_modifier(Modifier::BOLD)),
-                        Span::raw(" to start editing."),
-                    ],
-                    Style::default().add_modifier(Modifier::RAPID_BLINK),
-                ),
-                InputMode::Editing => (
-                    vec![
-                        Span::raw("Press "),
-                        Span::styled("Esc", Style::default().add_modifier(Modifier::BOLD)),
-                        Span::raw(" to stop editing, "),
-                        Span::styled("Enter", Style::default().add_modifier(Modifier::BOLD)),
-                        Span::raw(" to record the message"),
-                    ],
-                    Style::default(),
-                ),
-            };
-            let mut text = Text::from(Spans::from(msg));
-            text.patch_style(style);
-            let help_message = Paragraph::new(text);
-            f.render_widget(help_message, chunks[0]);
-
-            let input = Paragraph::new(app.input.as_ref())
-                .style(match app.input_mode {
-                    InputMode::Normal => Style::default(),
-                    InputMode::Editing => Style::default().fg(Color::Yellow),
-                })
-                .block(Block::default().borders(Borders::ALL).title("Input"));
-            f.render_widget(input, chunks[1]);
-            match app.input_mode {
-                InputMode::Normal =>
-                    // Hide the cursor. `Frame` does this by default, so we don't need to do anything here
-                    {}
-
-                InputMode::Editing => {
-                    // Make the cursor visible and ask tui-rs to put it at the specified coordinates after rendering
-                    f.set_cursor(
-                        // Put cursor past the end of the input text
-                        chunks[1].x + app.input.width() as u16 + 1,
-                        // Move one line down, from the border to the input line
-                        chunks[1].y + 1,
-                    )
-                }
-            }
-
-            let messages: Vec<ListItem> = app
-                .messages
-                .iter()
-                .enumerate()
-                .map(|(i, m)| {
-                    let content = vec![Spans::from(Span::raw(format!("{}: {}", i, m)))];
-                    ListItem::new(content)
-                })
-                .collect();
-            let messages =
-                List::new(messages).block(Block::default().borders(Borders::ALL).title("Messages"));
-            f.render_widget(messages, chunks[2]);
-        })?;
-
-        // Handle input
-        if let Event::Input(input) = events.next()? {
-            match app.input_mode {
-                InputMode::Normal => match input {
-                    Key::Char('e') => {
-                        app.input_mode = InputMode::Editing;
-                    }
-                    Key::Char('q') => {
-                        break;
-                    }
-                    _ => {}
-                },
-                InputMode::Editing => match input {
-                    Key::Char('\n') => {
-                        app.messages.push(app.input.drain(..).collect());
-                    }
-                    Key::Char(c) => {
-                        app.input.push(c);
-                    }
-                    Key::Backspace => {
-                        app.input.pop();
-                    }
-                    Key::Esc => {
-                        app.input_mode = InputMode::Normal;
-                    }
-                    _ => {}
-                },
-            }
-        }
-    }
-    Ok(())
 }
