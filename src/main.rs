@@ -11,15 +11,15 @@ use termion::terminal_size;
 use cursive::event::Key;
 use cursive::views::*;
 
-fn main() {
-    let mut cursive = cursive::default();
+use std::path::Path;
+use std::fs::read_dir;
 
-    //cursive.set_fps(30);
+fn main() {
+  /*
+    let mut cursive = cursive::default();
 
     let temrinal_size = termion::terminal_size().unwrap();
 
-    // Create a view tree with a TextArea for input, and a
-    // TextView for output.
     let mut friends_list = SelectView::new().h_align(HAlign::Center);
     friends_list.add_item("1", 1);
     friends_list.add_item("2", 2);
@@ -36,25 +36,15 @@ fn main() {
     .child(friends_dialog)
     .child(dialog_and_input_layer);
     cursive.add_fullscreen_layer(Dialog::around(fullscreen_layer));
-          /*SizeConstraint::Fixed(10),
-                            SizeConstraint::Fixed(10),
-                            Panel::new(TextArea::new()
-                                .content("")
-                                .with_name("input"))))
-        .child(BoxView::new(SizeConstraint::Fixed(10),
-                            SizeConstraint::Fixed(10),
-                            Panel::new(TextView::new("")
-                                .with_id("output")))
-                              */
-    // cursive.add_global_callback(Key::Esc, |c| {
-    //     // When the user presses Escape, update the output view
-    //     // with the contents of the input view.
-    //     let input = c.find_id::<TextArea>("input").unwrap();
-    //     let mut output = c.find_id::<TextView>("output").unwrap();
-    //     output.set_content(input.get_content());
-    // });
 
-    cursive.run();
+
+    cursive.run();*/
+
+  let path = std::fs::read_dir(".").unwrap();
+
+  for component in path {
+    println!("{:?}", component.unwrap().path().file_name());
+  }
 }
 
 /*fn main() {

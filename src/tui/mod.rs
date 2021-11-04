@@ -7,7 +7,7 @@ use cursive::{
   Cursive
 };
 
-mod ui;
+//mod ui;
 
 pub fn create_default_windows(siv: &mut cursive::CursiveRunnable) {
   //let content = include_str!("../assets/lorem.txt");  
