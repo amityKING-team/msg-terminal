@@ -27,7 +27,7 @@ impl TerminalUI {
   }
 
   fn find_config_file() -> Result<String>{
-    let directory = fs::read_dir("../assets/").unwrap();
+    let directory = fs::read_dir("src/assets").unwrap();
     for item in directory {
       if item.unwrap().path() == "config.toml" {
         let data = fs::read_to_string(item).expect("Unable to read file");
@@ -59,7 +59,7 @@ impl Default for TerminalUI {
 
 
 
-  search_directory() -> Result<> {
+  // search_directory() -> Result<> {
 
-  }
+  // }
 }
