@@ -15,6 +15,7 @@ keywords = ["messenger", "tui", "terminal", "social network"]
 #cursive = "*"
 serde_json = "*"
 termion = "*"
+cfg-match = "0.2.1"
 
 [dependencies.cursive]
 version = "0.16.3"
