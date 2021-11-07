@@ -7,7 +7,7 @@ use cursive::{
   Cursive,
 };
 
-mod ui;
+pub mod ui;
 
 pub fn create_default_windows(siv: &mut cursive::CursiveRunnable) {
   //let content = include_str!("../assets/lorem.txt");
@@ -83,13 +83,13 @@ pub fn create_default_windows(siv: &mut cursive::CursiveRunnable) {
   ));
 }
 
-pub fn create_default_theme(siv: &mut cursive::CursiveRunnable) {
+/*pub fn create_default_theme(siv: &mut cursive::CursiveRunnable) {
   // You can load a theme from a file at runtime for fast development.
   siv.load_theme_file("src/assets/style.toml").unwrap();
 
   // Or you can directly load it from a string for easy deployment.
   siv.load_toml(include_str!("../assets/style.toml")).unwrap();
-}
+}*/
 
 fn find(siv: &mut Cursive, text: &str) {
   // First, remove the find popup

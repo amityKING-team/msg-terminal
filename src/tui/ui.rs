@@ -1,57 +1,59 @@
 use {
-  cursive::Cursive,
+  cursive::CursiveRunnable,
   std::{
     env::consts::FAMILY,
-    fs::File,
+    fs::{read_to_string, File},
     //result,
     path::Path,
+    //slice,
     str,
-    slice,
   },
   toml::Value,
 };
 
 // Does `pub`?
 pub struct TerminalUI {
-  siv: cursive::CursiveRunnable,
-  config: toml::Value,
+  siv: CursiveRunnable,
+  config: Value,
 }
 
 impl TerminalUI {
+  // TODO: Add 
   fn define_os() -> Option<String> {
-    /*let os = cfg_match! {
-
-    };
-    Some(os.to_string())*/
-    Some("unix".to_string())
+    todo!();
+    //Some("unix".to_string())
   }
 
-  fn config_path() -> &'static str {
-    let os: String = FAMILY.to_string();
+  pub fn config_path() -> &'static str {
+    // TODO: Maybe use OS than FAMILY
+    let os: &str = FAMILY;
     return match os {
-      "linux" => "src/assets/config.toml",
-      "windows"=> "src/assets/config.toml",
+      "unix" => "src/assets/config.toml",
+      // TODO: Look universal string for all platforms
+      "windows" => "src/assets/config.toml",
+      _ => "unknown",
     };
   }
 
   fn have_config_file() -> bool {
-    //let directory = fs::read_dir("src/assets").unwrap();
     let path = Path::new(TerminalUI::config_path());
-    let data: Result<&str, &'static str>;
     return match File::open(path) {
       Ok(_) => true,
       Err(_) => false,
     };
-    //if(data.is_ok()) {
-    //} else {
-    //  return None
-    //}
   }
 
   pub fn config() -> Result<toml::Value, &'static str> {
     if TerminalUI::have_config_file() {
-      let json: toml::Value = toml::from_str(TerminalUI::config_path()).unwrap();
-      return Ok(json);
+      //let file = File::open(TerminalUI::config_path()).unwrap();
+      let data = read_to_string(TerminalUI::config_path()).unwrap();
+      //println!("{}", data);
+      let toml_config = data.parse::<Value>().unwrap();
+      //.unwrap();
+      //toml::from_str(&data).unwrap();
+      //println!("{:?}", json);
+      return Ok(toml_config);
+
     }
     Err("No config file")
   }
@@ -59,14 +61,14 @@ impl TerminalUI {
 
 impl Default for TerminalUI {
   fn default() -> Self {
-    let os = TerminalUI::define_os().unwrap();
+    //let os = TerminalUI::define_os().unwrap();
 
     let config = TerminalUI::config();
 
     let mut siv = cursive::default();
 
     let temrinal = TerminalUI {
-      siv: siv, 
+      siv: siv,
       config: config.unwrap(),
     };
     temrinal
