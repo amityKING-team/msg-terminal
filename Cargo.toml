@@ -17,8 +17,12 @@ keywords = ["messenger", "tui", "terminal", "social network"]
 termion = "*"
 cfg-match = "0.2.1"
 toml="*"
+config = "0.11.0"
 
 [dependencies.cursive]
 version = "0.16.3"
 default-features = false
 features = ["termion-backend", "toml"]
+
+#[dependencies.config]
+#path="../"

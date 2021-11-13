@@ -1,7 +1,6 @@
 use {
   cursive::CursiveRunnable,
   std::{
-    env::consts::FAMILY,
     fs::{read_to_string, File},
     //result,
     path::Path,
@@ -9,7 +8,14 @@ use {
     str,
   },
   toml::Value,
+  config::Config,
 };
+
+#[path = "../msg_config/mod.rs"]
+pub mod impl_config;
+//use impl_config;
+//pub mod TemrinalConfig;
+//use impl_config::TemrinalConfig;
 
 // Does `pub`?
 pub struct TerminalUI {
@@ -18,25 +24,8 @@ pub struct TerminalUI {
 }
 
 impl TerminalUI {
-  // TODO: Add 
-  fn define_os() -> Option<String> {
-    todo!();
-    //Some("unix".to_string())
-  }
-
-  pub fn config_path() -> &'static str {
-    // TODO: Maybe use OS than FAMILY
-    let os: &str = FAMILY;
-    return match os {
-      "unix" => "src/assets/config.toml",
-      // TODO: Look universal string for all platforms
-      "windows" => "src/assets/config.toml",
-      _ => "unknown",
-    };
-  }
-
   fn have_config_file() -> bool {
-    let path = Path::new(TerminalUI::config_path());
+    let path = Path::new(impl_config::TerminalConfig::config_path());
     return match File::open(path) {
       Ok(_) => true,
       Err(_) => false,
