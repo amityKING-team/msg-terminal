@@ -9,6 +9,7 @@ use {
     slice,
   },
   toml::Value,
+  config::Config,
 };
 
 // Does `pub`?
@@ -18,22 +19,6 @@ pub struct TerminalUI {
 }
 
 impl TerminalUI {
-  fn define_os() -> Option<String> {
-    /*let os = cfg_match! {
-
-    };
-    Some(os.to_string())*/
-    Some("unix".to_string())
-  }
-
-  fn config_path() -> &'static str {
-    let os: String = FAMILY.to_string();
-    return match os {
-      "linux" => "src/assets/config.toml",
-      "windows"=> "src/assets/config.toml",
-    };
-  }
-
   fn have_config_file() -> bool {
     //let directory = fs::read_dir("src/assets").unwrap();
     let path = Path::new(TerminalUI::config_path());
