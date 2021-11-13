@@ -1,20 +1,17 @@
 mod tui;
+use tui::ui::TerminalUI;
 
-use cursive::align::{Align, HAlign};
-use cursive::traits::*;
-use cursive::views::{Dialog, DummyView, LinearLayout, TextView};
+//use cursive::align::{Align, HAlign};
+//use cursive::traits::*;
+// use cursive::views::{Dialog, DummyView, LinearLayout, TextView};
 
-use termion::terminal_size;
+// use termion::terminal_size;
 
-// This example uses a LinearLayout to stick multiple views next to each other.
-
-use cursive::event::Key;
-use cursive::views::*;
-
-use std::fs::read_dir;
-use std::path::Path;
+// use cursive::event::Key;
+// use cursive::views::*;
 
 fn main() {
+  let temrinal = TerminalUI::default();
   /*
   let mut cursive = cursive::default();
 
@@ -39,7 +36,6 @@ fn main() {
 
 
   cursive.run();*/
-
 }
 
 /*fn main() {
