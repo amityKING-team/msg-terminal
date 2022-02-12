@@ -1,41 +1,26 @@
 use {
   cursive::CursiveRunnable,
   std::{
-    fs::{read_to_string, File},
-    //result,
-    path::Path,
-    //slice,
     str,
   },
   toml::Value,
-  config::Config,
+  crate::configuration::msg_configuration as msg_config,
 };
-
-#[path = "../msg_config/mod.rs"]
-pub mod impl_config;
-//use impl_config;
-//pub mod TemrinalConfig;
-//use impl_config::TemrinalConfig;
 
 // Does `pub`?
 pub struct TerminalUI {
   siv: CursiveRunnable,
-  config: Value,
+  config: msg_config::Configuration,
 }
 
 impl TerminalUI {
-  fn have_config_file() -> bool {
-    let path = Path::new(impl_config::TerminalConfig::config_path());
-    return match File::open(path) {
-      Ok(_) => true,
-      Err(_) => false,
-    };
+
   }
 
   pub fn config() -> Result<toml::Value, &'static str> {
-    if TerminalUI::have_config_file() {
+    if TerminalUI::check_config_file() {
       //let file = File::open(TerminalUI::config_path()).unwrap();
-      let data = read_to_string(TerminalUI::config_path()).unwrap();
+      let data = read_to_string(msg_config::Configuration::config_path()).unwrap();
       //println!("{}", data);
       let toml_config = data.parse::<Value>().unwrap();
       //.unwrap();
@@ -53,12 +38,16 @@ impl Default for TerminalUI {
     //let os = TerminalUI::define_os().unwrap();
 
     let config = TerminalUI::config();
+    let config = match config {
+      Ok(config) => config,
+      Err(config) =>
+    };
 
     let mut siv = cursive::default();
 
     let temrinal = TerminalUI {
       siv: siv,
-      config: config.unwrap(),
+      config: config,
     };
     temrinal
   }

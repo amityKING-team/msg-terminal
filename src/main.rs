@@ -1,4 +1,6 @@
 mod tui;
+mod configuration;
+
 use tui::ui::TerminalUI;
 
 //use cursive::align::{Align, HAlign};
