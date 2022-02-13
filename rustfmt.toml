@@ -1,4 +1,13 @@
 #binop_separator = "Front"
 #brace_style = "PreferSameLine"
 tab_spaces = 2
-
+binop_separator = "Front"
+blank_lines_upper_bound = 1
+brace_style = "PreferSameLine"
+combine_control_expr = false
+indent_style = "Visual"
+imports_granularity = "Crate"
+overflow_delimited_expr = true
+reorder_impl_items = true
+group_imports = "StdExternalCrate"
+trailing_semicolon = false

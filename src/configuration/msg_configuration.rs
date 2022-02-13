@@ -7,14 +7,14 @@ use {
   std::collections::HashMap;
 };
 
-pub struct Configuration {
-  config: HashMap, 
-  path: &'static str,
+pub struct Configuration<'l> {
+  config: HashMap<&'l str, String>, 
+  path: &'l str,
 }
 
-impl Configuration {
+impl<'l> Configuration<'l> {
 
-  pub fn new() -> Configuration {
+  pub fn new() -> &'l Configuration {
     let configObject = 
     let config = Configuration {
       config: read(),
@@ -51,9 +51,10 @@ impl Configuration {
   }
 
   fn check_file() -> bool {
-    let path = Path::new(msg_config::Configuration::config_path());
+    let path = Path::new(Configuration::config_path());
     return match File::open(path) {
       Ok(_) => true,
       Err(_) => false,
     }
+  }
 }

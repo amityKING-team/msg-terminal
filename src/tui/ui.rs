@@ -15,9 +15,7 @@ pub struct TerminalUI {
 
 impl TerminalUI {
 
-  }
-
-  pub fn config() -> Result<toml::Value, &'static str> {
+  /*pub fn config() -> Result<toml::Value, &'static str> {
     if TerminalUI::check_config_file() {
       //let file = File::open(TerminalUI::config_path()).unwrap();
       let data = read_to_string(msg_config::Configuration::config_path()).unwrap();
@@ -30,10 +28,10 @@ impl TerminalUI {
 
     }
     Err("No config file")
-  }
+  }*/
 }
 
-impl Default for TerminalUI {
+/*impl Default for TerminalUI {
   fn default() -> Self {
     //let os = TerminalUI::define_os().unwrap();
 
@@ -51,4 +49,4 @@ impl Default for TerminalUI {
     };
     temrinal
   }
-}
+}*/
