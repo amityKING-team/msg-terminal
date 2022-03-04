@@ -1,13 +1,9 @@
 #[path = "../src/tui/mod.rs"]
 pub mod tui;
 
-use {
-  tui::ui::TerminalUI,
-  std::{
-    fs::File,
-    path::Path,
-  }
-};
+use std::{fs::File, path::Path};
+
+use tui::ui::TerminalUI;
 
 #[cfg(test)]
 mod terminaui_test {
@@ -27,7 +23,6 @@ mod terminaui_test {
     let test_path = "src/assets/config.toml";
     assert_eq!(test_path, TerminalUI::config_path())
   }
-
 
   #[test]
   fn have_config_file_test() {

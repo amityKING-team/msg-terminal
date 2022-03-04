@@ -1,11 +1,9 @@
-use {
-  cursive::CursiveRunnable,
-  std::{
-    str,
-  },
-  toml::Value,
-  crate::configuration::msg_configuration as msg_config,
-};
+use std::str;
+
+use cursive::CursiveRunnable;
+use toml::Value;
+
+use crate::configuration::msg_configuration as msg_config;
 
 // Does `pub`?
 pub struct TerminalUI {
@@ -14,7 +12,6 @@ pub struct TerminalUI {
 }
 
 impl TerminalUI {
-
   /*pub fn config() -> Result<toml::Value, &'static str> {
     if TerminalUI::check_config_file() {
       //let file = File::open(TerminalUI::config_path()).unwrap();

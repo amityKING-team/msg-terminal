@@ -17,6 +17,7 @@ keywords = ["messenger", "tui", "terminal", "social network"]
 termion = "*"
 cfg-match = "0.2.1"
 toml="*"
+serde="*"
 #msg_config = { path = "src/msg_config"}
 
 [dependencies.cursive]
