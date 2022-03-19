@@ -1,0 +1,29 @@
+[package]
+name = "msg-terminal"
+version = "0.1.0"
+edition = "2021"
+authors = ["Nikita Karatsev (NotAPattern) <nikita.karatsev@gmail.com>"]
+description = "Text user interface (TUI) client for some social network"
+readme = "README.md"
+repository = "https://github.com/NotAPattern/msg-terminal/tree/rust-develop"
+license-file = "LICENSE"
+keywords = ["messenger", "tui", "terminal", "social network"]
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+#cursive = "*"
+#serde_json = "*"
+termion = "*"
+cfg-match = "0.2.1"
+toml="*"
+serde="*"
+#msg_config = { path = "src/msg_config"}
+
+[dependencies.cursive]
+version = "0.16.3"
+default-features = false
+features = ["termion-backend", "toml"]
+
+#[dependencies.config]
+#path="../src/msg_config"
