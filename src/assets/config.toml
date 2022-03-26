@@ -1,3 +1,2 @@
-# [package]
-name = "toml"
-version = "0.4.2"
+theme = "default"
+lang = "toml"

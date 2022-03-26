@@ -1,48 +1,49 @@
 use std::{collections::HashMap, env::consts::FAMILY, fmt::Display, fs::read_to_string};
 
-use toml::Value;
+use serde_derive::{Deserialize, Serialize};
+use toml::from_str;
 
+#[derive(Debug, Serialize, Deserialize)]
 pub struct Configuration {
-  config: HashMap<String, Box<dyn Display + 'static>>,
+  theme: &'static str,
+  lang: &'static str,
+  // config: HashMap<String, Box<dyn Display + 'static>>,
 }
 
 impl Configuration {
-  fn read() -> HashMap<String, Box<dyn Display + 'static>> {
-    let string_file = match read_to_string(Configuration::path()) {
-      Err(why) => panic!("Can't open configuration file: {} \t :(", why),
-      Ok(string) => string,
+  fn read() -> Result<String, std::io::Error> {
+    let read_string = read_to_string(Configuration::path());
+    return read_string;
+  }
+  fn parse<'a>(read_string: &'a Result<String, std::io::Error>) -> Option<Configuration> {
+    let config: Option<Configuration> = match read_string {
+      Ok(str_ok) => toml::from_str(&str_ok).ok(),
+      _ => None,
+    };
+    return config;
+  }
+}
+
+impl Default for Configuration {
+  fn default() -> Self {
+    let default_config = Configuration {
+      theme: "default",
+      lang: "en",
     };
 
-    let value_config: HashMap<String, toml::Value> = toml::from_str(&string_file).unwrap();
-    let mut config: HashMap<String, Box<dyn Display + 'static>> = HashMap::new();
-    for (key, value) in value_config {
-      let config_key = key.clone();
-      // TODO: Add datetime, etc.
-      let config_value: Box<dyn Display + 'static> = match value {
-        toml::Value::String(val) => Box::new(val),
-        toml::Value::Integer(num) => Box::new(num),
-        toml::Value::Float(float) => Box::new(float),
-        toml::Value::Boolean(boolean) => Box::new(boolean),
-        _ => Box::new(1),
-      };
-      // Represents a TOML datetime
-      // Datetime(Datetime),
-      // Represents a TOML array
-      // Array(Array),
-      // Represents a TOML table
-      // Table(Table),
-      config.insert(config_key, config_value);
-    }
-    return config
+    default_config
   }
 }
 
 impl Configuration {
   pub fn new() -> Configuration {
-    //let configObject =
-    let config = Configuration { config: Configuration::read() };
+    let config_string = Configuration::read();
+    let config = match Configuration::parse(config_string) {
+      Some(config) => config,
+      None => Configuration::default(),
+    };
 
-    return config
+    return config;
   }
 
   pub fn path() -> &'static str {
@@ -51,6 +52,6 @@ impl Configuration {
       "unix" => &"src/assets/config.toml",
       "windows" => &"src/assets/config.toml",
       _ => "unknown",
-    }
+    };
   }
 }
