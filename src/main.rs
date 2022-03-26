@@ -19,7 +19,8 @@ use tui::ui::TerminalUI;
 // use cursive::views::*;
 
 fn main() {
-
+  let config = configuration::Configuration::new();
+  println!("{:?}", &config);
   //let temrinal = TerminalUI::default();
   /*
   let mut cursive = cursive::default();

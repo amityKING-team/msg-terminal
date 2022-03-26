@@ -3,12 +3,12 @@ use std::str;
 use cursive::CursiveRunnable;
 use toml::Value;
 
-use crate::configuration::msg_configuration as msg_config;
+//use crate::configuration::msg_configuration as msg_config;
 
 // Does `pub`?
 pub struct TerminalUI {
   siv: CursiveRunnable,
-  config: msg_config::Configuration,
+  //config: msg_config::Configuration,
 }
 
 impl TerminalUI {
