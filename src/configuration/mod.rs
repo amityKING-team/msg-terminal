@@ -9,35 +9,19 @@ pub struct Configuration {
   lang: &'static str,
 }
 
+// impl<'l> Configuration {
+//   fn parse(read_str: &'l str) -> Result<Configuration, toml::de::Error> {
+//     let config = toml::from_str(&read_str);
+
+//     config
+//   }
+// }
+
 impl<'l> Configuration {
-  fn parse(read_str: &'l Result<String, std::io::Error>) -> Result<Configuration, toml::de::Error> {
-    let read_string = read_str.unwrap();
-    let config = toml::from_str(&read_string);
+  pub fn open() -> std::io::Result<Configuration> {
+    let read_string: String = read_to_string(Configuration::path())?;
 
-    config
-  }
-}
-
-impl Configuration {
-  pub fn new() -> Configuration {
-    let read_string = match read_to_string(Configuration::path()) {
-      Ok(result) => result,
-      Err(why) => println!("Can't read file: {}", why)
-    };
-
-    let config = match Configuration::parse(&read_string) {
-      Ok(result) => result,
-      Err(why) => {
-        print!("Can't parse file, default config");
-        Configuration::default()
-      }
-    };
-    /*match Configuration::parse(config_string) {
-      Some(config) => config,
-      None => Configuration::default(),
-    };*/
-
-    return config;
+    Ok(toml::from_str(&read_string)?)
   }
 
   pub fn path() -> &'static str {
