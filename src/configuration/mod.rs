@@ -19,7 +19,7 @@ pub struct Configuration {
 
 impl<'l> Configuration {
   pub fn open() -> std::io::Result<Configuration> {
-    let read_string: String = read_to_string(Configuration::path())?;
+    let read_string: &'static String = read_to_string(Configuration::path())?;
 
     Ok(toml::from_str(&read_string)?)
   }
