@@ -2,7 +2,7 @@
 name = "msg-terminal"
 version = "0.1.0"
 edition = "2021"
-authors = ["Nikita Karatsev (NotAPattern) <nikita.karatsev@gmail.com>"]
+authors = ["Nikita Karatsev (notapattern) <nikita.karatsev@gmail.com>"]
 description = "Text user interface (TUI) client for some social network"
 readme = "README.md"
 repository = "https://github.com/NotAPattern/msg-terminal"
@@ -21,7 +21,7 @@ toml="*"
 #msg_config = { path = "src/msg_config"}
 
 [dependencies.cursive]
-version = "0.17.0"
+version = "0.18.0"
 default-features = false
 features = ["termion-backend", "toml"]
 

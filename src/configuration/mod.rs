@@ -1,4 +1,4 @@
-use std::{env::consts::FAMILY, fs::read_to_string};
+use std::{env::consts::FAMILY, fs, path::Path};
 
 use serde_derive::{Deserialize, Serialize};
 use toml::from_str;
@@ -19,17 +19,21 @@ pub struct Configuration {
 
 impl<'l> Configuration {
   pub fn open() -> std::io::Result<Configuration> {
-    let read_string: &'static String = read_to_string(Configuration::path())?;
+    let path_string = match Configuration::path() {
+      Some(x) => x,
+      None => Err("Can't define OS family"),
+    };
+    let read_string = fs::read(path_string);
 
-    Ok(toml::from_str(&read_string)?)
+    Ok(toml::from_str(*read_string)?)
   }
 
-  pub fn path() -> &'static str {
+  pub fn path<'a>() -> Option<&'a Path> {
     // TODO: Maybe use OS than FAMILY
     return match FAMILY {
-      "unix" => &"src/assets/config.toml",
-      "windows" => &"src/assets/config.toml",
-      _ => "unknown",
+      "unix" => Some(Path::new("src/assets/config.toml")),
+      "windows" => Some(Path::new("src/assets/config.toml")),
+      _ => None,
     };
   }
 }
