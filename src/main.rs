@@ -1,10 +1,13 @@
 mod configuration;
 mod tui;
 
-use std::{
-  collections::HashMap,
-  fmt::{Debug, Display},
-  fs::read_to_string,
+use {
+  configuration::Configuration,
+  std::{
+    collections::HashMap,
+    fmt::{Debug, Display},
+    fs::read_to_string,
+  },
 };
 
 use toml::Value;
@@ -19,12 +22,19 @@ use tui::ui::TerminalUI;
 // use cursive::views::*;
 
 fn main() {
-  let config = match configuration::Configuration::open() {
-    Ok(result) => result,
-    Err(_) => configuration::Configuration::default(),
-  };
-  println!("{:?}", &config);
+  let config_string = Configuration::open();
 
+  let config = match config_string {
+    Ok(result) => Configuration::parse(&result[..]),
+    Err(err) => Err(err),
+  };
+  println!("{:?}", config);
+  /*  let config = match configuration::Configuration::open() {
+      Ok(result) => result,
+      Err(_) => configuration::Configuration::default(),
+    };
+    println!("{:?}", &config);
+  */
   //let temrinal = TerminalUI::default();
   /*
   let mut cursive = cursive::default();

@@ -1,44 +1,50 @@
-use std::{env::consts::FAMILY, fs, path::Path};
-
 use serde_derive::{Deserialize, Serialize};
+use std::{env::consts::FAMILY, fs, path::Path};
 use toml::from_str;
+
+struct CustomError(String);
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Configuration {
-  theme: &'static str,
-  lang: &'static str,
+  theme: String,
+  lang: String,
 }
 
-// impl<'l> Configuration {
-//   fn parse(read_str: &'l str) -> Result<Configuration, toml::de::Error> {
-//     let config = toml::from_str(&read_str);
-
-//     config
-//   }
-// }
-
-impl<'l> Configuration {
-  pub fn open() -> std::io::Result<Configuration> {
-    let path_string = match Configuration::path() {
-      Some(x) => x,
-      None => Err("Can't define OS family"),
-    };
-    let read_string = fs::read(path_string);
-
-    Ok(toml::from_str(*read_string)?)
-  }
-
-  pub fn path<'a>() -> Option<&'a Path> {
+impl Configuration {
+  pub fn path<'a>() -> Option<&'a str> {
     // TODO: Maybe use OS than FAMILY
     return match FAMILY {
-      "unix" => Some(Path::new("src/assets/config.toml")),
-      "windows" => Some(Path::new("src/assets/config.toml")),
+      "unix" => Some(&"src/assets/Config.toml"),
+      "windows" => Some(&"src/assets/Config.toml"),
       _ => None,
     };
   }
+
+  pub fn open() -> Result<String, String> {
+    let path_string = match Configuration::path() {
+      Some(x) => Ok(x),
+      None => Err("Can't define OS"),
+    };
+    let config_string = match path_string {
+      Ok(result) => match fs::read_to_string(result) {
+        Ok(string) => string,
+        Err(err) => err.to_string(),
+      },
+      Err(err) => format!("{} \n {}", err, &"Can't open file"),
+    };
+    Ok(config_string)
+  }
+
+  pub fn parse(config_string: &str) -> Result<Configuration, String> {
+    let config: Result<Configuration, String> = match toml::from_str(&config_string[..]) {
+      Ok(result) => result,
+      Err(err) => Err(format!("Can't parse config file: {}", err)),
+    };
+    config
+  }
 }
 
-impl Default for Configuration {
+/*impl Default for Configuration {
   fn default() -> Self {
     let default_config = Configuration {
       theme: "default",
@@ -47,4 +53,4 @@ impl Default for Configuration {
 
     default_config
   }
-}
+}*/
